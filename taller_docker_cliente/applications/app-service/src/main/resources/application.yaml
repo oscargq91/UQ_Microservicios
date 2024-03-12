@@ -1,0 +1,17 @@
+server:
+  port: 9080
+spring:
+  application:
+    name: "taller_docker_cliente"
+  devtools:
+    add-properties: false
+  profiles:
+    include: null
+adapter:
+  restconsumer:
+    timeout: 5000
+    url: ${URL-SERVIDOR}
+management:
+  health:
+    circuitbreakers:
+      enabled: true
