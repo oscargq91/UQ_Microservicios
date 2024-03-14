@@ -6,7 +6,10 @@ import co.com.bancolombia.api.dto.response.UserDTO;
 import co.com.bancolombia.api.dto.response.UserListResponseDTO;
 import co.com.bancolombia.api.dto.response.UserResponseDTO;
 import co.com.bancolombia.model.user.User;
+import co.com.bancolombia.model.user.exception.BusinessException;
+import co.com.bancolombia.model.user.exception.message.ErrorMessage;
 import lombok.experimental.UtilityClass;
+import org.springframework.web.reactive.function.server.ServerRequest;
 
 import java.util.List;
 
@@ -54,6 +57,15 @@ public class UserHelper {
                         .map(UserHelper::getUserDTOFromUser).toList())
                 .build();
 
+
+    }
+
+    public static String getAuthorization(ServerRequest serverRequest) {
+        String token = serverRequest.headers().firstHeader("authorization");
+       if(token!=null){
+           return token;
+       }
+       throw new BusinessException(ErrorMessage.TOKEN_REQUERIDO);
 
     }
 }

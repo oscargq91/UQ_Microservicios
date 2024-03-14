@@ -9,4 +9,5 @@ public interface UserRepository {
     Mono<User>saveUser(User user);
     Flux<User>findAllUsers();
     Mono<Void>deleteUserById(String id);
+    Mono<User> findByUsername(String username);
 }

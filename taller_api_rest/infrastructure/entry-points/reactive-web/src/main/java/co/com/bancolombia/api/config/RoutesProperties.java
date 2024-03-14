@@ -11,5 +11,7 @@ public class RoutesProperties {
 
     private String user;
     private String userId;
+    private String login;
+    private String password;
 
 }

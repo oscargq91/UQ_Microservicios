@@ -1,13 +1,18 @@
 package co.com.bancolombia.api;
 
 import co.com.bancolombia.api.common.ValidationRequest;
+import co.com.bancolombia.api.dto.request.LoginRequestDTO;
+import co.com.bancolombia.api.dto.request.UpdatePasswordRequestDTO;
 import co.com.bancolombia.api.dto.request.UserSaveRequestDTO;
 import co.com.bancolombia.api.dto.request.UserUpdateRequestDTO;
+import co.com.bancolombia.api.dto.response.LoginResponseDTO;
 import co.com.bancolombia.api.helper.UserHelper;
+import co.com.bancolombia.model.user.Login;
 import co.com.bancolombia.model.user.exception.BusinessException;
 import co.com.bancolombia.model.user.exception.message.ErrorMessage;
 import co.com.bancolombia.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -15,6 +20,8 @@ import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
 
 import java.util.Objects;
+
+import static co.com.bancolombia.api.helper.UserHelper.getAuthorization;
 
 
 @Component
@@ -41,7 +48,7 @@ public class Handler {
         return userUseCase.findAllUsers()
                 .collectList()
                 .map(UserHelper::getUserListResponseDtoFromUser)
-                .flatMap(userListResponseDTO -> ServerResponse.ok().bodyValue(userListResponseDTO));
+                .flatMap(userListResponseDTO->ServerResponse.ok().bodyValue(userListResponseDTO));
 
     }
     @NonNull
@@ -77,4 +84,28 @@ public class Handler {
                 .map(UserHelper::getUserResponseDtoFromUser)
                 .flatMap(userResponseDTO -> ServerResponse.ok().bodyValue(userResponseDTO));
     }
+
+    @NonNull
+    public Mono<ServerResponse> validateCredentials(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(LoginRequestDTO.class)
+                .flatMap(validationRequest::validateData)
+                .map(loginRequestDTO -> Login.builder()
+                        .username(loginRequestDTO.getLogin().getUsername())
+                        .password(loginRequestDTO.getLogin().getPassword())
+                        .build())
+                .flatMap(userUseCase::getToken)
+                .map(token -> LoginResponseDTO.builder().token(token).build())
+                .flatMap(loginResponseDTO ->  ServerResponse.ok().bodyValue(loginResponseDTO));
+    }
+    @NonNull
+    public Mono<ServerResponse> updatePassword(ServerRequest serverRequest) {
+
+        return serverRequest.bodyToMono(UpdatePasswordRequestDTO.class)
+                .flatMap(validationRequest::validateData)
+                .flatMap(updatePasswordRequestDTO ->
+                        userUseCase.updatePassword(updatePasswordRequestDTO.getPassword(),getAuthorization(serverRequest)))
+                .flatMap(userResponseDTO -> ServerResponse.ok().bodyValue(userResponseDTO));
+    }
+
+
 }

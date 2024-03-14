@@ -1,6 +1,7 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
+	implementation project( ':jwt')
 	testImplementation 'com.tngtech.archunit:archunit:1.2.1'
 	implementation project( ':reactive-web')
 	implementation project( ':mongo-repository')

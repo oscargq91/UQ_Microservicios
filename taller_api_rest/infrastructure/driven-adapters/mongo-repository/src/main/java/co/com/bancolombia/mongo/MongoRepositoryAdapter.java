@@ -1,10 +1,13 @@
 package co.com.bancolombia.mongo;
 
 import co.com.bancolombia.model.user.User;
+import co.com.bancolombia.model.user.exception.BusinessException;
+import co.com.bancolombia.model.user.exception.message.ErrorMessage;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import co.com.bancolombia.mongo.dto.UserDTO;
 import co.com.bancolombia.mongo.helper.AdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -23,7 +26,10 @@ public class MongoRepositoryAdapter extends AdapterOperations<User, UserDTO, Str
 
     @Override
     public Mono<User> saveUser(User user) {
-        return super.save(user);
+
+            return super.save(user)
+                    .onErrorMap(DuplicateKeyException.class,
+                            error -> new BusinessException(ErrorMessage.BAD_REQUEST_USERNAME_DUPLICATED));
     }
 
     @Override
@@ -34,5 +40,16 @@ public class MongoRepositoryAdapter extends AdapterOperations<User, UserDTO, Str
     @Override
     public Mono<Void> deleteUserById(String id) {
         return super.deleteById(id);
+    }
+
+    @Override
+    public Mono<User> findByUsername(String username) {
+        return repository.findByUsername(username)
+                .map(userDTO -> User.builder()
+                        .id(userDTO.getId())
+                        .email(userDTO.getEmail())
+                        .password(userDTO.getPassword())
+                        .username(userDTO.getUsername())
+                        .build());
     }
 }

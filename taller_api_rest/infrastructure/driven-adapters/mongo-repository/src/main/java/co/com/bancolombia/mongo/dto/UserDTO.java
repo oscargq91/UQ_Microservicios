@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
@@ -19,6 +20,7 @@ public class UserDTO {
 
     @Id
     private String id;
+    @Indexed(name = "username_index",unique = true)
     private String username;
     private String password;
     private String email;
