@@ -21,6 +21,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class Handler {
     private final UserUseCase userUseCase;
+
     private final ValidationRequest validationRequest;
     private static final String ID = "id";
 
