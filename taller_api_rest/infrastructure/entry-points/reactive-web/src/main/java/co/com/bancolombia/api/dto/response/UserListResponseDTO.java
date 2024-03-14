@@ -20,4 +20,5 @@ public class UserListResponseDTO {
     @Schema(required = true, description = "The user List of the system.")
     private List<UserDTO> users;
 
+
 }

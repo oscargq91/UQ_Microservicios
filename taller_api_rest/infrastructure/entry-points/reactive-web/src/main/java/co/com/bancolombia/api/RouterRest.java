@@ -25,8 +25,8 @@ public class RouterRest {
                 .GET(routesProperties.getUserId(), handler::getUserById,OpenApi.getUserById())
                 .DELETE(routesProperties.getUserId(), handler::deleteUserById,OpenApi.deleteUserById())
                 .PUT(routesProperties.getUser(), handler::updateUser,OpenApi.updateUserById())
-                .POST(routesProperties.getLogin(), handler::validateCredentials,OpenApi.updateUserById())
-                .PUT(routesProperties.getPassword(), handler::updatePassword,OpenApi.updateUserById())
+                .POST(routesProperties.getLogin(), handler::validateCredentials,OpenApi.loginUser())
+                .PUT(routesProperties.getPassword(), handler::updatePassword,OpenApi.updatePassword())
                 .build();
     }
 }

@@ -68,4 +68,8 @@ public class UserHelper {
        throw new BusinessException(ErrorMessage.TOKEN_REQUERIDO);
 
     }
+
+    public static String getheader(ServerRequest serverRequest, String  headerName) {
+        return serverRequest.headers().firstHeader(headerName);
+    }
 }

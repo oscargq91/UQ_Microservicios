@@ -1,7 +1,10 @@
 package co.com.bancolombia.api;
 
+import co.com.bancolombia.api.dto.request.LoginRequestDTO;
+import co.com.bancolombia.api.dto.request.UpdatePasswordRequestDTO;
 import co.com.bancolombia.api.dto.request.UserSaveRequestDTO;
 import co.com.bancolombia.api.dto.request.UserUpdateRequestDTO;
+import co.com.bancolombia.api.dto.response.LoginResponseDTO;
 import co.com.bancolombia.api.dto.response.UserListResponseDTO;
 import co.com.bancolombia.api.dto.response.UserResponseDTO;
 
@@ -86,7 +89,43 @@ public class OpenApi {
                 .description("Endpoint to retrieve all users.")
                 .tag("User")
                 .summary("Retrieve all users.")
+                .parameter(parameterBuilder().in(ParameterIn.HEADER)
+                        .name("page-number")
+                        .description("Page Number: Indicates the current page number in pagination.")
+                        .implementation(Integer.class)
+                        .required(Boolean.FALSE))
+                .parameter(parameterBuilder().in(ParameterIn.HEADER)
+                        .name("page-size")
+                        .description("Page Size: Specifies the number of items displayed per page in pagination.")
+                        .implementation(Integer.class)
+                        .required(Boolean.FALSE))
                 .response(buildSuccessfullUserListResponseDTOResponse(HttpStatus.OK.value(), DESCRIPTION_OK))
+                .response(buildErrorResponse());
+    }
+    public static Consumer<Builder> loginUser() {
+        return ops -> ops
+                .operationId("loginUser")
+                .description("Endpoint to authenticate a user.")
+                .tag("User")
+                .summary("Authenticate a user.")
+                .requestBody(buildLoginRequestDTO())
+                .response(buildTokenesponse(HttpStatus.OK.value(), DESCRIPTION_OK))
+                .response(buildErrorResponse());
+    }
+
+    public static Consumer<Builder> updatePassword() {
+        return ops -> ops
+                .operationId("updatePassword")
+                .description("Endpoint to update a user's password.")
+                .tag("User")
+                .summary("Update a user's password.")
+                .parameter(parameterBuilder().in(ParameterIn.HEADER)
+                        .name("Authorization")
+                        .description("Authentication token for accessing protected resources.")
+                        .implementation(String.class)
+                        .required(Boolean.FALSE))
+                .requestBody(buildUpdatePasswordtDTO())
+                .response(buildSuccessfullUserResponseDTOResponse(HttpStatus.OK.value(), DESCRIPTION_OK))
                 .response(buildErrorResponse());
     }
 
@@ -107,6 +146,14 @@ public class OpenApi {
                         .schema(schemaBuilder()
                                 .implementation(UserResponseDTO.class)));
     }
+    private static org.springdoc.core.fn.builders.apiresponse.Builder buildTokenesponse(int httpStatus, String description) {
+        return responseBuilder()
+                .responseCode(String.valueOf(httpStatus))
+                .description(description)
+                .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
+                        .schema(schemaBuilder()
+                                .implementation(LoginResponseDTO.class)));
+    }
 
     private static org.springdoc.core.fn.builders.apiresponse.Builder buildErrorResponse() {
         return responseBuilder()
@@ -123,6 +170,14 @@ public class OpenApi {
                                 .implementation(UserSaveRequestDTO.class)))
                 .required(true);
     }
+    private static org.springdoc.core.fn.builders.requestbody.Builder buildLoginRequestDTO() {
+        return requestBodyBuilder()
+                .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
+                        .schema(schemaBuilder()
+                                .implementation(LoginRequestDTO.class)))
+                .required(true);
+    }
+
     private static org.springdoc.core.fn.builders.requestbody.Builder buildUserUpdateRequestDTO() {
         return requestBodyBuilder()
                 .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
@@ -130,6 +185,12 @@ public class OpenApi {
                                 .implementation(UserUpdateRequestDTO.class)))
                 .required(true);
     }
-
+    private static org.springdoc.core.fn.builders.requestbody.Builder buildUpdatePasswordtDTO() {
+        return requestBodyBuilder()
+                .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
+                        .schema(schemaBuilder()
+                                .implementation(UpdatePasswordRequestDTO.class)))
+                .required(true);
+    }
 
 }

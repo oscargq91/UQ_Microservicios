@@ -12,7 +12,6 @@ import co.com.bancolombia.model.user.exception.BusinessException;
 import co.com.bancolombia.model.user.exception.message.ErrorMessage;
 import co.com.bancolombia.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -22,6 +21,7 @@ import reactor.util.annotation.NonNull;
 import java.util.Objects;
 
 import static co.com.bancolombia.api.helper.UserHelper.getAuthorization;
+import static co.com.bancolombia.api.helper.UserHelper.getheader;
 
 
 @Component
@@ -45,12 +45,29 @@ public class Handler {
 
     @NonNull
     public Mono<ServerResponse> findAllUsers(ServerRequest serverRequest) {
+        String number = getheader(serverRequest, "page-number");
+        String size = getheader(serverRequest, "page-size");
+        if (size != null && number != null && !size.isEmpty() && !number.isEmpty()) {
+            int pageNumber = Integer.parseInt(number);
+            int pageSize = Integer.parseInt(size);
+            if (pageSize > 0 && pageNumber > 0) {
+                int startIndex = (pageNumber - 1) * pageSize;
+                return userUseCase.findAllUsers()
+                        .skip(startIndex)
+                        .take(pageSize)
+                        .collectList()
+                        .map(UserHelper::getUserListResponseDtoFromUser)
+                        .flatMap(userListResponseDTO -> ServerResponse.ok().bodyValue(userListResponseDTO));
+            }
+
+        }
         return userUseCase.findAllUsers()
                 .collectList()
                 .map(UserHelper::getUserListResponseDtoFromUser)
-                .flatMap(userListResponseDTO->ServerResponse.ok().bodyValue(userListResponseDTO));
+                .flatMap(userListResponseDTO -> ServerResponse.ok().bodyValue(userListResponseDTO));
 
     }
+
     @NonNull
     public Mono<ServerResponse> deleteUserById(ServerRequest serverRequest) {
         return Mono.just(serverRequest.pathVariable(ID))
@@ -59,6 +76,7 @@ public class Handler {
                 .flatMap(userUseCase::deleteUserById)
                 .then(ServerResponse.noContent().build());
     }
+
     @NonNull
     public Mono<ServerResponse> getUserById(ServerRequest serverRequest) {
         return Mono.just(serverRequest.pathVariable(ID))
@@ -68,8 +86,9 @@ public class Handler {
                 .map(UserHelper::getUserResponseDtoFromUser)
                 .filter(Objects::nonNull)
                 .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.NOT_FOUND_USER)))
-                .flatMap(userResponseDTO-> ServerResponse.ok().bodyValue(userResponseDTO));
+                .flatMap(userResponseDTO -> ServerResponse.ok().bodyValue(userResponseDTO));
     }
+
     @NonNull
     public Mono<ServerResponse> updateUser(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(UserUpdateRequestDTO.class)
@@ -95,15 +114,16 @@ public class Handler {
                         .build())
                 .flatMap(userUseCase::getToken)
                 .map(token -> LoginResponseDTO.builder().token(token).build())
-                .flatMap(loginResponseDTO ->  ServerResponse.ok().bodyValue(loginResponseDTO));
+                .flatMap(loginResponseDTO -> ServerResponse.ok().bodyValue(loginResponseDTO));
     }
+
     @NonNull
     public Mono<ServerResponse> updatePassword(ServerRequest serverRequest) {
 
         return serverRequest.bodyToMono(UpdatePasswordRequestDTO.class)
                 .flatMap(validationRequest::validateData)
                 .flatMap(updatePasswordRequestDTO ->
-                        userUseCase.updatePassword(updatePasswordRequestDTO.getPassword(),getAuthorization(serverRequest)))
+                        userUseCase.updatePassword(updatePasswordRequestDTO.getPassword(), getAuthorization(serverRequest)))
                 .flatMap(userResponseDTO -> ServerResponse.ok().bodyValue(userResponseDTO));
     }
 
