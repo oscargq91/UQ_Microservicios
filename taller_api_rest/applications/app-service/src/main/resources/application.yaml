@@ -1,14 +1,32 @@
-##Spring Configuration
 server:
   port: 8080
 spring:
+  webflux:
+    base-path: /api/v1
   application:
     name: taller_api_rest
   devtools:
     add-properties: false
-  h2:
-    console:
-      enabled: true
-      path: /h2
   profiles:
-    include:
+    include: null
+  data:
+    mongodb:
+      uri: ${MONGO-URI}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+routes:
+  path-mapping:
+    user: /users
+    user-id: /users/{id}
+
+
+
+
+
