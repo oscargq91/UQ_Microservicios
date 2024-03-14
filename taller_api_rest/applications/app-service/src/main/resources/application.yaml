@@ -26,6 +26,13 @@ routes:
     user: /users
     user-id: /users/{id}
 
+springdoc:
+  api-docs:
+    path: /api-docs
+
+
+
+
 
 
 

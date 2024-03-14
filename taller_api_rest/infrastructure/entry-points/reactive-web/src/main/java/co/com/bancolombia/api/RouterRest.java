@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RouterFunctions.route;
+import static org.springdoc.webflux.core.fn.SpringdocRouteBuilder.route;
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -19,11 +20,11 @@ public class RouterRest {
     @Bean
     public RouterFunction<ServerResponse> agreementRoutes(Handler handler) {
         return route()
-                .POST(routesProperties.getUser(), handler::saveUser)
-                .GET(routesProperties.getUser(), handler::findAllUsers)
-                .GET(routesProperties.getUserId(), handler::getUserById)
-                .DELETE(routesProperties.getUserId(), handler::deleteUserById)
-                .PUT(routesProperties.getUser(), handler::updateUser)
+                .POST(routesProperties.getUser(), handler::saveUser, OpenApi.saveUser())
+                .GET(routesProperties.getUser(), handler::findAllUsers,OpenApi.findAllUsers())
+                .GET(routesProperties.getUserId(), handler::getUserById,OpenApi.getUserById())
+                .DELETE(routesProperties.getUserId(), handler::deleteUserById,OpenApi.deleteUserById())
+                .PUT(routesProperties.getUser(), handler::updateUser,OpenApi.updateUserById())
                 .build();
     }
 }
