@@ -16,4 +16,5 @@ services:
 
 # Ejecutar docker-compose -p talller-api-rest up -d en la ruta donde se encuentra este archivo
 # Crear la imagen  docker build -t taller-api-rest:1.0 . 
-# ver el puerto del contenedor  docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my-mongo-db  
+# ver el puerto del contenedor  docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my-mongo-db
+#  docker build -t taller-api-rest:1.0 .
