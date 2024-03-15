@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  my-mongo-db:
+    container_name: my-mongo-db
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+  api-rest:
+    container_name: api-rest
+    image: taller-api-rest:1.0
+    ports:
+      - "8080:8080"
+    environment:
+      - MONGO-URI=mongodb://my-mongo-db:27017/mi_base_de_datos
+     
+
+# Ejecutar docker-compose -p talller-api-rest up -d en la ruta donde se encuentra este archivo
+# Crear la imagen  docker build -t taller-api-rest:1.0 . 
+# ver el puerto del contenedor  docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my-mongo-db  
