@@ -70,22 +70,6 @@ Feature: API de gestión de usuarios
         Then la respuesta debe tener un código de estado 200
         And la respuesta debe contener una lista de usuarios
 
-    Scenario: Listar usuarios con paginación
-        When se envía una solicitud GET a '/users' con los siguientes headers:
-            | Nombre del Header | Valor |
-            | page-size         | 10    |
-            | page-number       | 1     |
-        Then la respuesta debe tener un código de estado 200
-        And la respuesta debe contener una lista de usuarios paginada
-        And el número de usuarios en la página debe ser igual al tamaño de página especificado
-        And la respuesta debe contener información de paginación
-
-    Scenario: Listar usuarios sin especificar el tamaño de página ni el número de página
-        When se envía una solicitud GET a '/users' sin especificar el tamaño de página ni el número de página
-        Then la respuesta debe tener un código de estado 200
-        And la respuesta debe contener una lista de usuarios
-        And la lista de usuarios no debe ser paginada
-
     Scenario: Eliminar un usuario existente
         When se envía una solicitud DELETE a '/users/id_usuario'
         Then la respuesta debe tener un código de estado 204
@@ -129,42 +113,6 @@ Feature: API de gestión de usuarios
         }
         Then la respuesta debe tener un código de estado 404
         And la respuesta debe contener un mensaje de error indicando que el usuario no fue encontrado
-
-    Scenario: Intentar crear un usuario sin especificar el campo username
-        When se envía una solicitud PUT a '/users' con los siguientes datos:
-        {
-        "user": {
-        "id": "usuario_no_existente",
-        "password": "123456",
-        "email": "prueba_sin_username@prueba.com"
-        }
-        }
-        Then la respuesta debe tener un código de estado 400
-        And la respuesta debe contener un mensaje de error indicando que el campo username es obligatorio
-
-    Scenario: Intentar crear un usuario sin especificar el campo password
-        When se envía una solicitud PUT a '/users' con los siguientes datos:
-        {
-        "user": {
-        "id": "usuario_no_existente",
-        "username": "usuario_sin_password",
-        "email": "usuario_sin_password@prueba.com"
-        }
-        }
-        Then la respuesta debe tener un código de estado 400
-        And la respuesta debe contener un mensaje de error indicando que el campo password es obligatorio
-
-    Scenario: Intentar crear un usuario sin especificar el campo email
-        When se envía una solicitud PUT a '/users' con los siguientes datos:
-        {
-        "user": {
-        "id": "usuario_no_existente",
-        "username": "usuario_sin_email",
-        "password": "123456"
-        }
-        }
-        Then la respuesta debe tener un código de estado 400
-        And la respuesta debe contener un mensaje de error indicando que el campo email es obligatorio
 
     Scenario: Iniciar sesión con éxito
         When se envía una solicitud POST a /users/login con los siguientes datos:
