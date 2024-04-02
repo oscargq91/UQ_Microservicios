@@ -94,14 +94,16 @@ public class Handler {
         return serverRequest.bodyToMono(UserUpdateRequestDTO.class)
                 .flatMap(validationRequest::validateData)
                 .map(UserHelper::getUserFromUserUpdateRequestDto)
-                .flatMap(user -> userUseCase.getUserById(user.getId()))
-                .filter(Objects::nonNull)
-                .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.NOT_FOUND_USER)))
+                .flatMap(user -> userUseCase.getUserById(user.getId())
+                        .filter(Objects::nonNull)
+                        .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.NOT_FOUND_USER)))
+                        .then(Mono.just(user)))
                 .flatMap(userUseCase::saveUser)
                 .filter(Objects::nonNull)
                 .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.NOT_FOUND_USER)))
                 .map(UserHelper::getUserResponseDtoFromUser)
                 .flatMap(userResponseDTO -> ServerResponse.ok().bodyValue(userResponseDTO));
+
     }
 
     @NonNull
