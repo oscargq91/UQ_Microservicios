@@ -34,7 +34,7 @@ springdoc:
     path: /api-docs
 jwt:
   secret: 62EHKd8TEiyE6QfZSqQ4olUx8PettgOG377KaRTOchg=
-  expiration: 36
+  expiration: 3600
   issuer: ingesis.uniquindio.edu.co
 
 
