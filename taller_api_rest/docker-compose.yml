@@ -9,7 +9,7 @@ services:
     container_name: api-rest
     image: taller-api-rest:1.1
     ports:
-      - "8080:8080"
+      - "8090:8090"
     environment:
       - MONGO-URI=mongodb://my-mongo-db:27017/mi_base_de_datos
      
