@@ -13,7 +13,7 @@ services:
     ports:
       - "8090:8090"
     environment:
-      - MONGO_URI=mongodb://my-mongo-db:27017/mi_base_de_datos
+      - MONGO-URI=mongodb://my-mongo-db:27017/mi_base_de_datos
 
   jenkins:
     container_name: jenkins
