@@ -1,30 +1,37 @@
 version: "3.8"
+
 services:
   my-mongo-db:
     container_name: my-mongo-db
     image: mongo:5.0
     ports:
       - "27017:27017"
+
   api-rest:
     container_name: api-rest
     image: taller-api-rest:1.2
     ports:
       - "8090:8090"
     environment:
-      - MONGO-URI=mongodb://my-mongo-db:27017/mi_base_de_datos
+      - MONGO_URI=mongodb://my-mongo-db:27017/mi_base_de_datos
+
   jenkins:
-    container_name: jenkins_managed_by_compose
+    container_name: jenkins
     image: jenkins/jenkins:latest
     ports:
-      - "8081:8080"
+      - "8080:8080"
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
     restart: always
     networks:
       - net_jenkins
+
 volumes:
   jenkins_home:
+
+networks:
+  net_jenkins:
 
 # Ejecutar docker-compose -p talller-api-rest up -d en la ruta donde se encuentra este archivo
 # Crear la imagen  docker build -t taller-api-rest:1.0 . 
