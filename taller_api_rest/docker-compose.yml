@@ -7,7 +7,7 @@ services:
       - "27017:27017"
   api-rest:
     container_name: api-rest
-    image: taller-api-rest:1.1
+    image: taller-api-rest:1.2
     ports:
       - "8090:8090"
     environment:
