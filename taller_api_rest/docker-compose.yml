@@ -6,6 +6,8 @@ services:
     image: mongo:5.0
     ports:
       - "27017:27017"
+    networks:
+      - net_jenkins
 
   api-rest:
     container_name: api-rest
@@ -14,16 +16,26 @@ services:
       - "8090:8090"
     environment:
       - MONGO-URI=mongodb://my-mongo-db:27017/mi_base_de_datos
+    networks:
+      - net_jenkins
 
   jenkins:
     container_name: jenkins
-    image: jenkins/jenkins:latest
+    image: jenkins_cucumber
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
-    restart: always
+    networks:
+      - net_jenkins
+
+  rabbit_mq:
+    image: rabbitmq:3-management
+    ports:
+      - "15691:15691"
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - net_jenkins
 
