@@ -19,6 +19,16 @@ services:
     networks:
       - net_jenkins
 
+  logs-rest:
+    container_name: logs-rest
+    image: taller-logs:1.1
+    ports:
+      - "8070:8070"
+    environment:
+      - MONGO-URI=mongodb://my-mongo-db:27017/mi_base_de_datos
+    networks:
+      - net_jenkins
+
   jenkins:
     container_name: jenkins
     image: jenkins_cucumber
