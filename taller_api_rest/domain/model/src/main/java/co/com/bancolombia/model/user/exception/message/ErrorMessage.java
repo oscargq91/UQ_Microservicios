@@ -23,6 +23,7 @@ public enum ErrorMessage {
     TOKEN_REQUERIDO(400, "Header Authorization is required"),
     INVALID_PASSWORD(401,  "Unauthorized: Incorrect password"),
     BAD_REQUEST_BODY_NULL(404, "Body is required."),
+    EVENT_ERROR(500, "Generate Event Error"),
     UNEXPECTED_EXCEPTION(500, "Unexpected error");
 
     private final Integer code;

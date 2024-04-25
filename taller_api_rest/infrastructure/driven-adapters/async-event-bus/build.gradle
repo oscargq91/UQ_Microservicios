@@ -1,0 +1,10 @@
+dependencies {
+    implementation project(':model')
+    compileOnly 'org.springframework:spring-context'
+    compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation "org.reactivecommons:async-commons-rabbit-starter:$asyncCommonsRabbit"
+    implementation "org.springframework.boot:spring-boot:$springBootVersion"
+    implementation "org.reactivecommons:async-commons-rabbit-starter:${reactiveCommonsVersion}"
+
+
+}

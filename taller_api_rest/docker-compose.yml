@@ -11,7 +11,7 @@ services:
 
   api-rest:
     container_name: api-rest
-    image: taller-api-rest:1.2
+    image: taller-api-rest:1.3
     ports:
       - "8090:8090"
     environment:
@@ -30,7 +30,7 @@ services:
     networks:
       - net_jenkins
 
-  rabbit_mq:
+  rabbit_mq-api:
     image: rabbitmq:3-management
     ports:
       - "15691:15691"

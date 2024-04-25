@@ -1,5 +1,6 @@
 package co.com.bancolombia.usecase.user;
 
+import co.com.bancolombia.model.events.gateways.EventsGateway;
 import co.com.bancolombia.model.user.Login;
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.exception.BusinessException;
@@ -17,6 +18,7 @@ public class UserUseCase {
 
     private final UserRepository userRepository;
     private final LoginGateway loginGateway;
+    private final EventsGateway eventsGateway;
 
     public Mono<User> getUserById(String id){
         return userRepository.getUserById(id);
@@ -36,7 +38,11 @@ public class UserUseCase {
                 .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.NOT_FOUND_USER)))
                 .filter(user -> user.getPassword().equals(login.getPassword()))
                 .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.INVALID_PASSWORD)))
-                .flatMap(loginGateway::getTokenJwt);
+                .flatMap(loginGateway::getTokenJwt)
+                .doOnSuccess(name -> eventsGateway.emit("Usuario ".concat(login.getUsername()).concat(" ha generado el token de sesion de forma correcta"),
+                                "Autenticacion exitosa", "INFO")
+                        .subscribe())
+                .doOnError(exception -> eventsGateway.emit(exception.getMessage(), "Autenticacion Fallida","ERROR").subscribe());
 
     }
     public Mono<User> updatePassword(String password, String token){
