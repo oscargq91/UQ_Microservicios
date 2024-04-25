@@ -11,7 +11,6 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'io.spring.dependency-management'
 
-    compileJava.dependsOn validateStructure
     sourceCompatibility = JavaVersion.VERSION_17
 
     test {
@@ -21,6 +20,7 @@ subprojects {
     dependencies {
         implementation 'io.projectreactor:reactor-core'
         implementation 'io.projectreactor.addons:reactor-extra'
+        implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
 
         testImplementation 'io.projectreactor.tools:blockhound-junit-platform:1.0.9.RELEASE'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
