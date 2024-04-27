@@ -22,6 +22,8 @@ management:
     health:
       probes:
         enabled: true
+      show-details: always
+
 routes:
   path-mapping:
     user: /users
