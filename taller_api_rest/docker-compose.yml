@@ -11,7 +11,7 @@ services:
 
   api-rest:
     container_name: api-rest
-    image: taller-api-rest:1.3
+    image: taller-api-rest:1.4
     ports:
       - "8090:8090"
     environment:
@@ -21,11 +21,19 @@ services:
 
   logs-rest:
     container_name: logs-rest
-    image: taller-logs:1.1
+    image: taller-logs:1.3
     ports:
       - "8070:8070"
     environment:
       - MONGO-URI=mongodb://my-mongo-db:27017/mi_base_de_datos
+    networks:
+      - net_jenkins
+
+  health-rest:
+    container_name: health-rest
+    image: health-rest:1.0
+    ports:
+      - "8050:8050"
     networks:
       - net_jenkins
 
