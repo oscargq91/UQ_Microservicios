@@ -10,7 +10,7 @@ from flask_mail import Mail, Message
 app = Flask(__name__)
 
 # Configuración de la base de datos MongoDB
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb://my-mongo-db:27017/')
 db = client['mi_base_de_datos']
 services_collection = db['services']
 
@@ -144,4 +144,4 @@ def get_health(service_name):
 if __name__ == '__main__':
     load_services()
     update_scheduler()
-    app.run(debug=False)
+    app.run(debug=False, host='0.0.0.0', port=8050)
