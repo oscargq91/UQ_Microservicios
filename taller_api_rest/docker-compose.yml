@@ -11,7 +11,7 @@ services:
 
   api-rest:
     container_name: api-rest
-    image: taller-api-rest:1.4
+    image: taller-api-rest:1.5
     ports:
       - "8090:8090"
     environment:
@@ -54,6 +54,17 @@ services:
       - "15691:15691"
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - net_jenkins
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
     networks:
       - net_jenkins
 
