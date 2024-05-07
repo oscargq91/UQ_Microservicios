@@ -11,6 +11,7 @@ app = Flask(__name__)
 
 # Configuración de la base de datos MongoDB
 client = MongoClient('mongodb://my-mongo-db:27017/')
+#client = MongoClient('mongodb://localhost:27017/')
 db = client['mi_base_de_datos']
 services_collection = db['services']
 
@@ -48,22 +49,9 @@ def update_scheduler():
     scheduler.remove_all_jobs()
 
     for service in services:
-        scheduler.add_job(check_service_health, 'interval', seconds=get_frequency_seconds(service['frequency']),
+        scheduler.add_job(check_service_health, 'interval', seconds=service['frequency'],
                           args=[service], id=service['name'])
 
-
-def get_frequency_seconds(frequency):
-    interval, unit = frequency[:-1], frequency[-1]
-    if unit == 's':
-        return int(interval)
-    elif unit == 'm':
-        return int(interval) * 60
-    elif unit == 'h':
-        return int(interval) * 3600
-    elif unit == 'd':
-        return int(interval) * 86400
-    else:
-        raise ValueError(f"Invalid frequency unit: {unit}")
 
 
 def check_service_health(service):
