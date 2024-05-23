@@ -26,7 +26,7 @@ public class UserUseCase {
     public Mono<User>saveUser(User user){
         return userRepository.saveUser(user)
                 .doOnSuccess(user1 -> eventsGateway.emit(user1.getId(),
-                                user1.getUsername(), "INFO")
+                                user1.getUsername(), "PROFILE")
                         .subscribe());
     }
     public Flux<User> findAllUsers(){
