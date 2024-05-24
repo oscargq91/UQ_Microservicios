@@ -1,0 +1,37 @@
+server:
+  port: 8040
+spring:
+  webflux:
+    base-path: "/api/v1"
+  application:
+    name: "ms_user_profile_management"
+  devtools:
+    add-properties: false
+  profiles:
+    include: null
+  data:
+    mongodb:
+      uri: "${MONGO-URI}"
+      auto-index-creation: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: "always"
+routes:
+  path-mapping:
+    profile: "/profile"
+springdoc:
+  api-docs:
+    path: "/api-docs"
+jwt:
+  secret: "62EHKd8TEiyE6QfZSqQ4olUx8PettgOG377KaRTOchg="
+  expiration: 360000
+  issuer: "ingesis.uniquindio.edu.co"
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
