@@ -34,8 +34,8 @@ public class ConnectionRabbitConfig {
 
         PropertyMapper map = PropertyMapper.get();
         map.from("talller-api-rest-rabbit_mq-api-1").whenNonNull().to(factory::setHost);
-        map.from("localhost").whenNonNull().to(factory::setHost);
-        // map.from(5672).to(factory::setPort);
+        //map.from("localhost").whenNonNull().to(factory::setHost);
+        map.from(5672).to(factory::setPort);
         map.from("guest").whenNonNull().to(factory::setUsername);
         map.from("guest").whenNonNull().to(factory::setPassword);
         map.from("/").whenNonNull().to(factory::setVirtualHost);
