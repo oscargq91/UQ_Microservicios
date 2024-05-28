@@ -9,5 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "routes.path-mapping")
 public class RoutesProperties {
     private String profile;
+    private String profiles;
+    private String profileUsername;
+
 
 }

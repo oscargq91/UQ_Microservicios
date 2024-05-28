@@ -4,6 +4,7 @@ import co.com.bancolombia.model.profile.Profile;
 import co.com.bancolombia.model.profile.gateways.LoginGateway;
 import co.com.bancolombia.model.profile.gateways.ProfileRepository;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
@@ -23,5 +24,11 @@ public class ProfileUseCase {
     public Mono<Profile> saveProfile(Profile profile){
         return profileRepository.updateProfile(profile);
 
+    }
+    public Mono<Profile> getProfileByUsername(String username){
+        return profileRepository.getProfileByUsername(username);
+    }
+    public Flux<Profile> getProfiles(){
+        return  profileRepository.getProfiles();
     }
 }

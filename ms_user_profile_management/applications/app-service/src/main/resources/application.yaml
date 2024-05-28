@@ -26,6 +26,8 @@ management:
 routes:
   path-mapping:
     profile: "/profile"
+    profiles: "/profile"
+    profile-username: "/profile/{username}"
 springdoc:
   api-docs:
     path: "/api-docs"

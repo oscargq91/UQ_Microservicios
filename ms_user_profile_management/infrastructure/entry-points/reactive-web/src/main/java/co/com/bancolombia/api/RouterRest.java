@@ -19,6 +19,8 @@ public class RouterRest {
     private final RoutesProperties routesProperties;
     @Bean
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(PUT(routesProperties.getProfile()), handler::updateProfile);
+        return route(PUT(routesProperties.getProfile()), handler::updateProfile)
+                .andRoute(GET(routesProperties.getProfiles()),handler::findAllProfiles)
+                .andRoute(GET(routesProperties.getProfileUsername()),handler::getProfileById);
     }
 }
