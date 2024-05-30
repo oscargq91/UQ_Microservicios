@@ -8,6 +8,8 @@ import co.com.bancolombia.api.dto.request.UserUpdateRequestDTO;
 import co.com.bancolombia.api.dto.response.LoginResponseDTO;
 import co.com.bancolombia.api.helper.UserHelper;
 import co.com.bancolombia.model.user.Login;
+import co.com.bancolombia.model.user.User;
+import co.com.bancolombia.model.user.UserInfo;
 import co.com.bancolombia.model.user.exception.BusinessException;
 import co.com.bancolombia.model.user.exception.message.ErrorMessage;
 import co.com.bancolombia.usecase.user.UserUseCase;
@@ -88,6 +90,11 @@ public class Handler {
                 .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.NOT_FOUND_USER)))
                 .flatMap(userResponseDTO -> ServerResponse.ok().bodyValue(userResponseDTO));
     }
+    @NonNull
+    public Mono<ServerResponse> getUserInfo(ServerRequest serverRequest) {
+        return userUseCase.getUserAndProfile(getAuthorization(serverRequest))
+                .flatMap(userResponseDTO -> ServerResponse.ok().bodyValue(userResponseDTO));
+    }
 
     @NonNull
     public Mono<ServerResponse> updateUser(ServerRequest serverRequest) {
@@ -102,6 +109,19 @@ public class Handler {
                 .filter(Objects::nonNull)
                 .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.NOT_FOUND_USER)))
                 .map(UserHelper::getUserResponseDtoFromUser)
+                .flatMap(userResponseDTO -> ServerResponse.ok().bodyValue(userResponseDTO));
+
+    }
+    @NonNull
+    public Mono<ServerResponse> updateInfo(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(UserInfo.class)
+                .flatMap(user -> userUseCase.getUserById(user.getUser().getId())
+                        .filter(Objects::nonNull)
+                        .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.NOT_FOUND_USER)))
+                        .then(Mono.just(user)))
+                .flatMap(userInfo -> userUseCase.updateUserAndUsername(userInfo.getUser(),userInfo.getProfile(),getAuthorization(serverRequest)))
+                .filter(Objects::nonNull)
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.NOT_FOUND_USER)))
                 .flatMap(userResponseDTO -> ServerResponse.ok().bodyValue(userResponseDTO));
 
     }

@@ -2,10 +2,13 @@ package co.com.bancolombia.usecase.user;
 
 import co.com.bancolombia.model.events.gateways.EventsGateway;
 import co.com.bancolombia.model.user.Login;
+import co.com.bancolombia.model.user.Profile;
 import co.com.bancolombia.model.user.User;
+import co.com.bancolombia.model.user.UserInfo;
 import co.com.bancolombia.model.user.exception.BusinessException;
 import co.com.bancolombia.model.user.exception.message.ErrorMessage;
 import co.com.bancolombia.model.user.gateways.LoginGateway;
+import co.com.bancolombia.model.user.gateways.ProfileGateway;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -19,9 +22,21 @@ public class UserUseCase {
     private final UserRepository userRepository;
     private final LoginGateway loginGateway;
     private final EventsGateway eventsGateway;
+    private final ProfileGateway profileGateway;
 
     public Mono<User> getUserById(String id){
         return userRepository.getUserById(id);
+    }
+    public Mono<UserInfo> getUserAndProfile(String token){
+        return loginGateway.validateToken(token)
+                .filter(Objects::nonNull)
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.TOKEN_VALID_ERROR)))
+                .flatMap(username ->Mono.zip(userRepository.findByUsername(username),profileGateway.getProfile(username))
+                        .map(tuple-> UserInfo.builder()
+                                .user(tuple.getT1())
+                                .profile(tuple.getT2())
+                                .build()));
+
     }
     public Mono<User>saveUser(User user){
         return userRepository.saveUser(user)
@@ -62,4 +77,12 @@ public class UserUseCase {
                                 .password(password)
                         .build()));
     }
+    public Mono<UserInfo>updateUserAndUsername(User user, Profile profile, String token){
+        return  loginGateway.validateToken(token)
+                .filter(Objects::nonNull)
+                .switchIfEmpty(Mono.error(new BusinessException(ErrorMessage.TOKEN_VALID_ERROR)))
+                        .flatMap(t-> Mono.zip(userRepository.saveUser(user),profileGateway.updateProfile(profile,token)))
+                .map(tuple -> UserInfo.builder().user(tuple.getT1()).profile(tuple.getT2()).build());
+    }
+
 }

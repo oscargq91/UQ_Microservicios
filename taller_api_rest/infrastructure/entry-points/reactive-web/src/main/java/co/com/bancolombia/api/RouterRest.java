@@ -27,6 +27,8 @@ public class RouterRest {
                 .PUT(routesProperties.getUser(), handler::updateUser,OpenApi.updateUserById())
                 .POST(routesProperties.getLogin(), handler::validateCredentials,OpenApi.loginUser())
                 .PUT(routesProperties.getPassword(), handler::updatePassword,OpenApi.updatePassword())
+                .PUT(routesProperties.getApiGateway(), handler::updateInfo,OpenApi.updatePassword())
+                .GET(routesProperties.getApiGateway(), handler::getUserInfo,OpenApi.updatePassword())
                 .build();
     }
 }

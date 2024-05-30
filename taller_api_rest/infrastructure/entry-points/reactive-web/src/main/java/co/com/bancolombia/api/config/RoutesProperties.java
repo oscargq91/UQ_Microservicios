@@ -13,5 +13,6 @@ public class RoutesProperties {
     private String userId;
     private String login;
     private String password;
+    private String apiGateway;
 
 }
